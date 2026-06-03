@@ -54,6 +54,26 @@ The contract is one number per dimension, fed into an explicit weighted
 composite, compared to a baseline, classified into three tiers. The tier
 drives the process exit code, and the exit code drives the build.
 
+## Metrics, in standard vocabulary
+
+The four dimensions map to the vocabulary senior eval teams use, split into
+retrieval quality and generation quality:
+
+- `grounding_score`   answer supported by retrieved context (Ragas
+  ContextRelevance / ResponseGroundedness).
+- `faithfulness_flag` no contradiction or invented facts (Ragas Faithfulness;
+  Phoenix hallucination eval).
+- `relevance_score`   answer covers the question (Ragas / Phoenix
+  AnswerRelevancy and QA-correctness).
+- `exact_keyword`     required phrases present, a deterministic hard floor
+  (Ragas StringPresence; promptfoo `contains` / `regex`).
+
+Deliberate design: the deterministic checks (`exact_keyword`, contradiction and
+invented-number flags) run first and are reproducible; LLM-as-judge is reserved
+for the free-form dimensions where it earns its cost and non-determinism. The
+gate fails the build on a critical regression, the same shape as promptfoo
+`fail-on-threshold` or DeepEval `assert_test(...)` under `deepeval test run`.
+
 ## How to run
 
 No install. Python 3.9 or newer.
