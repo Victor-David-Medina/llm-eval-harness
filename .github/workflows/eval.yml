@@ -1,0 +1,51 @@
+name: eval-gate
+
+# The eval gate. This workflow is the CI enforcement point described in
+# ADR-001. It runs the unit tests and then the evaluation harness over the
+# golden dataset. A critical regression makes "python -m harness.cli eval"
+# exit non-zero, which fails this job, which blocks the merge.
+#
+# The harness needs no third-party packages, so there is no install step.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  eval-gate:
+    name: tests and eval gate
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.11", "3.12"]
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Run unit tests (stdlib unittest, no install)
+        run: python -m unittest discover -s tests -v
+
+      - name: Run the eval gate over the golden dataset
+        # Exits non-zero on a critical regression, which fails the job and
+        # blocks the merge. This line is the gate.
+        run: python -m harness.cli eval --dataset datasets/golden_sample.jsonl --json eval-report.json
+
+      - name: Upload the machine-readable eval report
+        # Runs even on failure so a blocked build still publishes its evidence.
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-report-py${{ matrix.python-version }}
+          path: eval-report.json
+          if-no-files-found: ignore

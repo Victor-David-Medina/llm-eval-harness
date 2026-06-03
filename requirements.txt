@@ -1,0 +1,11 @@
+# llm-eval-harness has NO required runtime dependencies.
+#
+# The harness, the CLI, and the test suite run on the Python standard library
+# alone (Python 3.9 or newer). That is a design choice: a reviewer can read
+# every line and run the gate with nothing installed.
+#
+# Optional, only if you prefer pytest over the built-in unittest runner.
+# The tests are written with unittest and run fine without this:
+#   python -m unittest discover -s tests
+#
+# pytest>=7.0
