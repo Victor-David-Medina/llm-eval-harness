@@ -1,10 +1,14 @@
 # llm-eval-harness
 
-[![eval-gate](https://github.com/Victor-David-Medina/llm-eval-harness/actions/workflows/eval.yml/badge.svg)](https://github.com/Victor-David-Medina/llm-eval-harness/actions/workflows/eval.yml)
+[![eval-gate](https://github.com/Victor-David-Medina/llm-eval-harness/actions/workflows/eval.yml/badge.svg)](https://github.com/Victor-David-Medina/llm-eval-harness/actions/workflows/eval.yml) [![Python 3.9+](https://img.shields.io/badge/Python-3.9%2B-3776AB?logo=python&logoColor=white)](https://www.python.org) [![License: MIT](https://img.shields.io/badge/License-MIT-44403C)](LICENSE)
 
 A small, honest, stdlib-only LLM evaluation harness that gates CI. It scores
 model output against checked-in golden datasets, detects regressions in tiers,
 and fails the build when quality drops past a critical line.
+
+If you are here from a job application: this repo is my public proof of eval
+discipline. The same pattern runs in production inside my AI operations
+platform (see Honest note below).
 
 ## Why this exists
 
@@ -174,6 +178,10 @@ small, readable core of it:
 - **Glean and similar eval frameworks.** The production discipline is a
   curated golden set, a composite score, and a regression check wired into CI.
   This is that discipline, stripped to its frame so it fits in one reading.
+- **Forward-deployed debugging.** An engineer embedded with a customer often
+  hears "the answers got worse after Tuesday's deploy." The per-record floors
+  and the baseline diff turn that into a five-minute answer: which records
+  dropped, by how much, and whether the gate should have blocked it.
 
 The point of the repo in an interview is not that the evaluators are
 state of the art. It is that I understand why a CI eval gate matters, where it
@@ -183,7 +191,7 @@ belongs in the pipeline, and what the honest tradeoffs are (see
 ## Honest note
 
 This is a standalone, clean-room extraction of a pattern, not a product. I am
-Victor David Medina, a veteran founder and engineer. I run a fuller version of
+Victor David Medina, a veteran engineer. I run a fuller version of
 this eval gate inside my own AI operations platform, where the same four
 dimensions are computed with stronger signals: embeddings on Qdrant and
 pgvector for grounding, an LLM-as-judge pass for faithfulness, traces in
