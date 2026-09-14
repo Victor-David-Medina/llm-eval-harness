@@ -6,6 +6,10 @@ A small, honest, stdlib-only LLM evaluation harness that gates CI. It scores
 model output against checked-in golden datasets, detects regressions in tiers,
 and fails the build when quality drops past a critical line.
 
+If you are here from a job application: this repo is my public proof of eval
+discipline. The same pattern runs in production inside my AI operations
+platform (see Honest note below).
+
 ## Why this exists
 
 LLM output is non-deterministic. The same prompt can produce a slightly worse
@@ -183,7 +187,7 @@ belongs in the pipeline, and what the honest tradeoffs are (see
 ## Honest note
 
 This is a standalone, clean-room extraction of a pattern, not a product. I am
-Victor David Medina, a veteran founder and engineer. I run a fuller version of
+Victor David Medina, a veteran engineer. I run a fuller version of
 this eval gate inside my own AI operations platform, where the same four
 dimensions are computed with stronger signals: embeddings on Qdrant and
 pgvector for grounding, an LLM-as-judge pass for faithfulness, traces in
