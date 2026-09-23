@@ -42,6 +42,13 @@ class GoldenRecord:
                      dataset doubles as a self-consistency check out of the
                      box; in a live pipeline you overwrite this with the
                      model's fresh output before scoring.
+        difficulty   A coarse label for the case: "standard", "edge", or
+                     "adversarial". Used to slice the scorecard and to let CI
+                     run a fast smoke subset and a full release eval from the
+                     same file.
+        tags         Free-form labels (e.g. "winback", "billing",
+                     "red-team", "smoke"). Reports can filter on them without
+                     a schema change.
     """
 
     input: str
@@ -50,6 +57,8 @@ class GoldenRecord:
     must_include: Sequence[str] = field(default_factory=tuple)
     record_id: str = ""
     produced: str = ""
+    difficulty: str = "standard"
+    tags: Sequence[str] = field(default_factory=tuple)
 
     def answer_under_test(self) -> str:
         """The text to score. Falls back to expected when produced is empty."""
@@ -85,6 +94,19 @@ def _coerce_record(obj: dict, line_no: int) -> GoldenRecord:
     if not isinstance(produced, str):
         raise GoldenError(f"line {line_no}: 'produced' must be a string when present")
 
+    difficulty = obj.get("difficulty", "standard")
+    if difficulty not in ("standard", "edge", "adversarial"):
+        raise GoldenError(
+            f"line {line_no}: 'difficulty' must be one of "
+            "'standard', 'edge', or 'adversarial'"
+        )
+
+    tags_raw = obj.get("tags", [])
+    if tags_raw is None:
+        tags_raw = []
+    if not isinstance(tags_raw, list) or not all(isinstance(x, str) for x in tags_raw):
+        raise GoldenError(f"line {line_no}: 'tags' must be a list of strings")
+
     return GoldenRecord(
         input=obj["input"],
         context=obj["context"],
@@ -92,6 +114,8 @@ def _coerce_record(obj: dict, line_no: int) -> GoldenRecord:
         must_include=tuple(must_include_raw),
         record_id=str(record_id),
         produced=produced,
+        difficulty=difficulty,
+        tags=tuple(tags_raw),
     )
 
 
