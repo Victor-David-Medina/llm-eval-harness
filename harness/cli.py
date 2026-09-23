@@ -4,6 +4,10 @@ Run it with:
 
     python -m harness.cli eval --dataset datasets/golden_sample.jsonl
 
+A fast smoke subset for CI, using the tags baked into the dataset:
+
+    python -m harness.cli eval --dataset datasets/golden_sample.jsonl --tag smoke
+
 It scores the dataset, prints a scorecard, and exits non-zero on a CRITICAL
 regression. A non-zero exit fails the GitHub Actions job, which blocks the
 merge. That single property, a failing eval stops the build, is the entire
@@ -116,6 +120,15 @@ def _cmd_eval(args: argparse.Namespace) -> int:
         sys.stderr.write(f"error: {exc}\n")
         return EXIT_USAGE
 
+    if args.tag:
+        wanted = set(args.tag)
+        records = [r for r in records if wanted & set(r.tags)]
+    if args.difficulty:
+        records = [r for r in records if r.difficulty == args.difficulty]
+    if not records:
+        sys.stderr.write("error: no records left after filtering\n")
+        return EXIT_USAGE
+
     baseline = _load_baseline(args.baseline)
     result = evaluate(records, baseline_mean=baseline)
     _print_scorecard(result, args.dataset)
@@ -198,6 +211,21 @@ def build_parser() -> argparse.ArgumentParser:
         "--json",
         default=None,
         help="Optional path to write a machine-readable JSON report.",
+    )
+    eval_parser.add_argument(
+        "--tag",
+        default=None,
+        help=(
+            "Only score records carrying this tag (repeatable). "
+            "Useful for a fast CI smoke run, e.g. --tag smoke."
+        ),
+        action="append",
+    )
+    eval_parser.add_argument(
+        "--difficulty",
+        default=None,
+        choices=("standard", "edge", "adversarial"),
+        help="Only score records with this difficulty label.",
     )
     eval_parser.set_defaults(func=_cmd_eval)
 

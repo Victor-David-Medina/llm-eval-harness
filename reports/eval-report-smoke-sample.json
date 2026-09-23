@@ -1,0 +1,198 @@
+{
+  "dataset": "datasets/golden_sample.jsonl",
+  "mean_composite": 0.772,
+  "baseline": null,
+  "severity": "info",
+  "passed": true,
+  "dimension_means": {
+    "grounding": 0.5832,
+    "faithfulness": 1.0,
+    "relevance": 0.3136,
+    "exact_keyword": 1.0
+  },
+  "records": [
+    {
+      "id": "lapsed-client-winback-tone",
+      "composite": 0.6725,
+      "dimensions": {
+        "grounding": 0.375,
+        "faithfulness": 1.0,
+        "relevance": 0.0667,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "slot-rescue-same-day",
+      "composite": 0.7625,
+      "dimensions": {
+        "grounding": 0.5,
+        "faithfulness": 1.0,
+        "relevance": 0.4167,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "review-request-after-visit",
+      "composite": 0.8063,
+      "dimensions": {
+        "grounding": 0.6667,
+        "faithfulness": 1.0,
+        "relevance": 0.375,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "billing-question-grounded",
+      "composite": 0.8333,
+      "dimensions": {
+        "grounding": 0.7778,
+        "faithfulness": 1.0,
+        "relevance": 0.3333,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "membership-renewal-grounded",
+      "composite": 0.8,
+      "dimensions": {
+        "grounding": 0.7222,
+        "faithfulness": 1.0,
+        "relevance": 0.2222,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "auto-repair-estimate-recovery",
+      "composite": 0.7352,
+      "dimensions": {
+        "grounding": 0.5789,
+        "faithfulness": 1.0,
+        "relevance": 0.0769,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "consult-booking-confirm",
+      "composite": 0.8022,
+      "dimensions": {
+        "grounding": 0.7692,
+        "faithfulness": 1.0,
+        "relevance": 0.1429,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g12",
+      "composite": 0.673,
+      "dimensions": {
+        "grounding": 0.36,
+        "faithfulness": 1.0,
+        "relevance": 0.1,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g15",
+      "composite": 0.8003,
+      "dimensions": {
+        "grounding": 0.5217,
+        "faithfulness": 1.0,
+        "relevance": 0.625,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g18",
+      "composite": 0.8,
+      "dimensions": {
+        "grounding": 0.619,
+        "faithfulness": 1.0,
+        "relevance": 0.4286,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g21",
+      "composite": 0.8076,
+      "dimensions": {
+        "grounding": 0.6087,
+        "faithfulness": 1.0,
+        "relevance": 0.5,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g26",
+      "composite": 0.6567,
+      "dimensions": {
+        "grounding": 0.2308,
+        "faithfulness": 1.0,
+        "relevance": 0.25,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g30",
+      "composite": 0.7625,
+      "dimensions": {
+        "grounding": 0.5417,
+        "faithfulness": 1.0,
+        "relevance": 0.3333,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g32",
+      "composite": 0.8159,
+      "dimensions": {
+        "grounding": 0.6364,
+        "faithfulness": 1.0,
+        "relevance": 0.5,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g34",
+      "composite": 0.852,
+      "dimensions": {
+        "grounding": 0.84,
+        "faithfulness": 1.0,
+        "relevance": 0.3333,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    }
+  ],
+  "reasons": [
+    "no baseline supplied; gating on absolute floors only"
+  ]
+}

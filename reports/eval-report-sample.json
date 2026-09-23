@@ -1,0 +1,498 @@
+{
+  "dataset": "datasets/golden_sample.jsonl",
+  "mean_composite": 0.7573,
+  "baseline": null,
+  "severity": "info",
+  "passed": true,
+  "dimension_means": {
+    "grounding": 0.528,
+    "faithfulness": 1.0,
+    "relevance": 0.3257,
+    "exact_keyword": 1.0
+  },
+  "records": [
+    {
+      "id": "lapsed-client-winback-tone",
+      "composite": 0.6725,
+      "dimensions": {
+        "grounding": 0.375,
+        "faithfulness": 1.0,
+        "relevance": 0.0667,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "lapsed-client-no-invented-discount",
+      "composite": 0.5839,
+      "dimensions": {
+        "grounding": 0.0714,
+        "faithfulness": 1.0,
+        "relevance": 0.0833,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "slot-rescue-same-day",
+      "composite": 0.7625,
+      "dimensions": {
+        "grounding": 0.5,
+        "faithfulness": 1.0,
+        "relevance": 0.4167,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "review-request-after-visit",
+      "composite": 0.8063,
+      "dimensions": {
+        "grounding": 0.6667,
+        "faithfulness": 1.0,
+        "relevance": 0.375,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "billing-question-grounded",
+      "composite": 0.8333,
+      "dimensions": {
+        "grounding": 0.7778,
+        "faithfulness": 1.0,
+        "relevance": 0.3333,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "scheduling-no-double-book",
+      "composite": 0.8075,
+      "dimensions": {
+        "grounding": 0.7333,
+        "faithfulness": 1.0,
+        "relevance": 0.25,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "no-show-followup-neutral",
+      "composite": 0.6844,
+      "dimensions": {
+        "grounding": 0.3571,
+        "faithfulness": 1.0,
+        "relevance": 0.1818,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "membership-renewal-grounded",
+      "composite": 0.8,
+      "dimensions": {
+        "grounding": 0.7222,
+        "faithfulness": 1.0,
+        "relevance": 0.2222,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "refund-policy-faithful",
+      "composite": 0.8437,
+      "dimensions": {
+        "grounding": 0.9375,
+        "faithfulness": 1.0,
+        "relevance": 0.0833,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "auto-repair-estimate-recovery",
+      "composite": 0.7352,
+      "dimensions": {
+        "grounding": 0.5789,
+        "faithfulness": 1.0,
+        "relevance": 0.0769,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "consult-booking-confirm",
+      "composite": 0.8022,
+      "dimensions": {
+        "grounding": 0.7692,
+        "faithfulness": 1.0,
+        "relevance": 0.1429,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g12",
+      "composite": 0.673,
+      "dimensions": {
+        "grounding": 0.36,
+        "faithfulness": 1.0,
+        "relevance": 0.1,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g13",
+      "composite": 0.5927,
+      "dimensions": {
+        "grounding": 0.08,
+        "faithfulness": 1.0,
+        "relevance": 0.125,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g14",
+      "composite": 0.6917,
+      "dimensions": {
+        "grounding": 0.2222,
+        "faithfulness": 1.0,
+        "relevance": 0.5,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g15",
+      "composite": 0.8003,
+      "dimensions": {
+        "grounding": 0.5217,
+        "faithfulness": 1.0,
+        "relevance": 0.625,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g16",
+      "composite": 0.7799,
+      "dimensions": {
+        "grounding": 0.4091,
+        "faithfulness": 1.0,
+        "relevance": 0.7143,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g17",
+      "composite": 0.75,
+      "dimensions": {
+        "grounding": 0.5,
+        "faithfulness": 1.0,
+        "relevance": 0.3333,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g18",
+      "composite": 0.8,
+      "dimensions": {
+        "grounding": 0.619,
+        "faithfulness": 1.0,
+        "relevance": 0.4286,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g19",
+      "composite": 0.7665,
+      "dimensions": {
+        "grounding": 0.5217,
+        "faithfulness": 1.0,
+        "relevance": 0.4,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g20",
+      "composite": 0.7137,
+      "dimensions": {
+        "grounding": 0.5455,
+        "faithfulness": 1.0,
+        "relevance": 0.0,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g21",
+      "composite": 0.8076,
+      "dimensions": {
+        "grounding": 0.6087,
+        "faithfulness": 1.0,
+        "relevance": 0.5,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g22",
+      "composite": 0.8087,
+      "dimensions": {
+        "grounding": 0.6957,
+        "faithfulness": 1.0,
+        "relevance": 0.3333,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g23",
+      "composite": 0.7225,
+      "dimensions": {
+        "grounding": 0.45,
+        "faithfulness": 1.0,
+        "relevance": 0.25,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g24",
+      "composite": 0.7207,
+      "dimensions": {
+        "grounding": 0.3548,
+        "faithfulness": 1.0,
+        "relevance": 0.4286,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g25",
+      "composite": 0.7813,
+      "dimensions": {
+        "grounding": 0.4375,
+        "faithfulness": 1.0,
+        "relevance": 0.6667,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g26",
+      "composite": 0.6567,
+      "dimensions": {
+        "grounding": 0.2308,
+        "faithfulness": 1.0,
+        "relevance": 0.25,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g27",
+      "composite": 0.7164,
+      "dimensions": {
+        "grounding": 0.4118,
+        "faithfulness": 1.0,
+        "relevance": 0.2857,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g28",
+      "composite": 0.748,
+      "dimensions": {
+        "grounding": 0.56,
+        "faithfulness": 1.0,
+        "relevance": 0.2,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g29",
+      "composite": 0.6943,
+      "dimensions": {
+        "grounding": 0.381,
+        "faithfulness": 1.0,
+        "relevance": 0.2,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g30",
+      "composite": 0.7625,
+      "dimensions": {
+        "grounding": 0.5417,
+        "faithfulness": 1.0,
+        "relevance": 0.3333,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g31",
+      "composite": 0.8137,
+      "dimensions": {
+        "grounding": 0.5455,
+        "faithfulness": 1.0,
+        "relevance": 0.6667,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g32",
+      "composite": 0.8159,
+      "dimensions": {
+        "grounding": 0.6364,
+        "faithfulness": 1.0,
+        "relevance": 0.5,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g33",
+      "composite": 0.78,
+      "dimensions": {
+        "grounding": 0.6667,
+        "faithfulness": 1.0,
+        "relevance": 0.2,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g34",
+      "composite": 0.852,
+      "dimensions": {
+        "grounding": 0.84,
+        "faithfulness": 1.0,
+        "relevance": 0.3333,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g35",
+      "composite": 0.7714,
+      "dimensions": {
+        "grounding": 0.5238,
+        "faithfulness": 1.0,
+        "relevance": 0.4286,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g36",
+      "composite": 0.765,
+      "dimensions": {
+        "grounding": 0.55,
+        "faithfulness": 1.0,
+        "relevance": 0.3333,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g37",
+      "composite": 0.8243,
+      "dimensions": {
+        "grounding": 0.7143,
+        "faithfulness": 1.0,
+        "relevance": 0.4,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g38",
+      "composite": 0.7447,
+      "dimensions": {
+        "grounding": 0.4348,
+        "faithfulness": 1.0,
+        "relevance": 0.4286,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g39",
+      "composite": 0.7195,
+      "dimensions": {
+        "grounding": 0.4815,
+        "faithfulness": 1.0,
+        "relevance": 0.1667,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    },
+    {
+      "id": "g40",
+      "composite": 0.8857,
+      "dimensions": {
+        "grounding": 0.7857,
+        "faithfulness": 1.0,
+        "relevance": 0.6667,
+        "exact_keyword": 1.0
+      },
+      "missing_keywords": [],
+      "faithful": true
+    }
+  ],
+  "reasons": [
+    "no baseline supplied; gating on absolute floors only"
+  ]
+}

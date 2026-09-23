@@ -27,6 +27,7 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from harness import evaluators  # noqa: E402
 from harness import golden  # noqa: E402
 from harness import score  # noqa: E402
+from harness import cli  # noqa: E402
 
 
 class TestGroundingScore(unittest.TestCase):
@@ -283,6 +284,46 @@ class TestGoldenLoader(unittest.TestCase):
         )
         self.assertEqual(record.answer_under_test(), "the expected answer")
 
+    def test_difficulty_and_tags_default(self):
+        path = self._write_jsonl([
+            json.dumps({"input": "q", "context": "c", "expected": "e"}),
+        ])
+        records = golden.load_golden(path)
+        self.assertEqual(records[0].difficulty, "standard")
+        self.assertEqual(records[0].tags, ())
+
+    def test_difficulty_and_tags_load(self):
+        path = self._write_jsonl([
+            json.dumps({
+                "input": "q", "context": "c", "expected": "e",
+                "difficulty": "adversarial",
+                "tags": ["red-team", "injection"],
+            }),
+        ])
+        records = golden.load_golden(path)
+        self.assertEqual(records[0].difficulty, "adversarial")
+        self.assertEqual(records[0].tags, ("red-team", "injection"))
+
+    def test_invalid_difficulty_raises(self):
+        path = self._write_jsonl([
+            json.dumps({
+                "input": "q", "context": "c", "expected": "e",
+                "difficulty": "impossible",
+            }),
+        ])
+        with self.assertRaises(golden.GoldenError):
+            golden.load_golden(path)
+
+    def test_non_list_tags_raise(self):
+        path = self._write_jsonl([
+            json.dumps({
+                "input": "q", "context": "c", "expected": "e",
+                "tags": "red-team",
+            }),
+        ])
+        with self.assertRaises(golden.GoldenError):
+            golden.load_golden(path)
+
 
 class TestEndToEndOnShippedDataset(unittest.TestCase):
     """The shipped golden dataset must pass its own gate.
@@ -306,6 +347,98 @@ class TestEndToEndOnShippedDataset(unittest.TestCase):
             msg=f"shipped dataset failed its own gate: {result.reasons}",
         )
         self.assertGreaterEqual(result.mean_composite, score.RUN_FLOOR)
+
+
+class TestEndToEndOnRedTeamDataset(unittest.TestCase):
+    """The shipped red-team dataset must FAIL its own gate.
+
+    Every record in datasets/redteam_sample.jsonl carries a deliberately bad
+    'produced' answer (injected instructions, invented prices, leaked data).
+    If this fixture ever passes the gate, the evaluators have gone blind.
+    """
+
+    def test_redteam_dataset_fails_gate(self):
+        dataset_path = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "datasets",
+            "redteam_sample.jsonl",
+        )
+        records = golden.load_golden(dataset_path)
+        self.assertGreaterEqual(len(records), 8)
+        self.assertTrue(
+            all(r.difficulty == "adversarial" for r in records),
+            msg="every red-team record must be labeled adversarial",
+        )
+        result = score.evaluate(records, baseline_mean=None)
+        self.assertFalse(
+            result.passed,
+            msg="red-team fixture passed its own gate; evaluators may be blind",
+        )
+        self.assertEqual(result.severity, "critical")
+
+
+class TestCliFilters(unittest.TestCase):
+    """--tag and --difficulty narrow the scored set before gating."""
+
+    def _write_jsonl(self, lines):
+        handle = tempfile.NamedTemporaryFile(
+            mode="w", suffix=".jsonl", delete=False, encoding="utf-8"
+        )
+        handle.write("\n".join(lines))
+        handle.close()
+        self.addCleanup(os.unlink, handle.name)
+        return handle.name
+
+    def _dataset(self):
+        return self._write_jsonl([
+            json.dumps({
+                "id": "smoke-one", "input": "q", "context": "the answer is yes",
+                "expected": "the answer is yes", "must_include": ["yes"],
+                "tags": ["smoke"],
+            }),
+            json.dumps({
+                "id": "full-only", "input": "q", "context": "the answer is yes",
+                "expected": "the answer is yes", "must_include": ["yes"],
+                "difficulty": "edge",
+            }),
+        ])
+
+    def _eval(self, **kwargs):
+        parser = cli.build_parser()
+        argv = ["eval", "--dataset", self._dataset()]
+        for key, value in kwargs.items():
+            flag = "--" + key.replace("_", "-")
+            if isinstance(value, list):
+                for item in value:
+                    argv += [flag, item]
+            else:
+                argv += [flag, value]
+        args = parser.parse_args(argv)
+        return args, cli._cmd_eval(args)
+
+    def test_tag_filter_scores_only_tagged_records(self):
+        args, code = self._eval(tag=["smoke"])
+        self.assertEqual(code, cli.EXIT_OK)
+
+    def test_difficulty_filter_scores_only_matching_records(self):
+        args, code = self._eval(difficulty="edge")
+        self.assertEqual(code, cli.EXIT_OK)
+
+    def test_empty_filter_result_is_a_usage_error(self):
+        args, code = self._eval(tag=["no-such-tag"])
+        self.assertEqual(code, cli.EXIT_USAGE)
+
+    def test_shipped_smoke_subset_passes(self):
+        dataset_path = os.path.join(
+            os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+            "datasets",
+            "golden_sample.jsonl",
+        )
+        parser = cli.build_parser()
+        args = parser.parse_args(
+            ["eval", "--dataset", dataset_path, "--tag", "smoke"]
+        )
+        self.assertEqual(cli._cmd_eval(args), cli.EXIT_OK)
 
 
 if __name__ == "__main__":

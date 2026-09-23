@@ -1,10 +1,20 @@
 # llm-eval-harness
 
 [![eval-gate](https://github.com/Victor-David-Medina/llm-eval-harness/actions/workflows/eval.yml/badge.svg)](https://github.com/Victor-David-Medina/llm-eval-harness/actions/workflows/eval.yml)
+[![python](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/)
+[![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+
+**Evals as tests: a CI gate for LLM output quality.**
 
 A small, honest, stdlib-only LLM evaluation harness that gates CI. It scores
 model output against checked-in golden datasets, detects regressions in tiers,
 and fails the build when quality drops past a critical line.
+
+The 30-second version: you check golden examples into the repo, the harness
+scores each new answer on four deterministic dimensions, rolls them into one
+weighted number, and compares it to a baseline. If the number falls too far,
+the build fails. No API keys, no model calls, no network. A reviewer can read
+every line.
 
 ## Why this exists
 
@@ -24,7 +34,8 @@ so a reviewer can read every line and run it with no install.
 ## Architecture
 
 ```
-  datasets/golden_sample.jsonl        (frozen, code-reviewed examples)
+  datasets/golden_sample.jsonl        (40 frozen, code-reviewed examples)
+  datasets/redteam_sample.jsonl       (12 adversarial probes)
         |
         v
   +-----------------------------------------------------------+
@@ -54,6 +65,48 @@ The contract is one number per dimension, fed into an explicit weighted
 composite, compared to a baseline, classified into three tiers. The tier
 drives the process exit code, and the exit code drives the build.
 
+## Datasets
+
+The corpus is the product. Every record is a frozen, code-reviewed example in
+the voice of a real service business (booking, billing, winback, scheduling,
+memberships, refunds), each with a human-signed-off expected answer and the
+phrases it must contain.
+
+**`datasets/golden_sample.jsonl`: 40 golden records.** The "known good" set
+the gate protects. Twelve categories:
+
+| Category | Records | Category | Records |
+|---|---|---|---|
+| winback | 5 | billing | 4 |
+| scheduling | 4 | membership | 4 |
+| slot-rescue | 3 | reviews | 3 |
+| no-show | 3 | refund | 3 |
+| auto-repair | 3 | consult | 3 |
+| faq | 3 | tone | 2 |
+
+Each record carries two labels:
+
+- `difficulty`: `standard` (33) or `edge` (7). The edge cases need date math,
+  partial refunds, or a second no-show.
+- `tags`: the category plus `smoke` on 15 records. `--tag smoke` runs the
+  fast subset in CI; the full 40 run on releases.
+
+**`datasets/redteam_sample.jsonl`: 12 adversarial records.** Each one
+carries a deliberately *bad* `produced` answer: prompt injection, invented
+prices and discounts, fabricated guarantees, a data-exfiltration probe, a
+contradicted policy, a missing required disclaimer, a wrong client name, a
+hostile tone, a confabulated service, and an indirect injection hidden inside
+retrieved notes. The whole suite scores a mean composite of **0.20** and the
+gate closes on it: 12 out of 12 records trip the per-record floor. If this
+fixture ever passes, the evaluators have gone blind; a test asserts exactly
+that.
+
+**How `produced` and `expected` work.** Each record's `expected` is the
+reviewer-approved reference answer. `produced` is the answer under test and
+defaults to `expected`, so the dataset doubles as a self-consistency check out
+of the box. In a live pipeline you overwrite `produced` with the model's fresh
+output before scoring. The golden file never moves.
+
 ## Metrics, in standard vocabulary
 
 The four dimensions map to the vocabulary senior eval teams use, split into
@@ -80,6 +133,24 @@ No install. Python 3.9 or newer.
 
 ```bash
 python -m harness.cli eval --dataset datasets/golden_sample.jsonl
+```
+
+Fast smoke subset for every commit (15 tagged records):
+
+```bash
+python -m harness.cli eval --dataset datasets/golden_sample.jsonl --tag smoke
+```
+
+Filter by difficulty, or combine both filters:
+
+```bash
+python -m harness.cli eval --dataset datasets/golden_sample.jsonl --difficulty edge
+```
+
+Run the adversarial suite and watch the gate close:
+
+```bash
+python -m harness.cli eval --dataset datasets/redteam_sample.jsonl
 ```
 
 Run the tests (standard library, no pytest required):
@@ -111,6 +182,24 @@ The `eval` command exits `0` when the gate is open and `1` on a critical
 regression. That exit code is the whole point: a CI job that runs this command
 fails the build when the gate closes.
 
+## Use it as a GitHub Action
+
+The repo ships a reusable composite action (`action.yml`), so any repo can
+gate on it without copying code:
+
+```yaml
+- uses: actions/checkout@v4
+- uses: Victor-David-Medina/llm-eval-harness@v1
+  with:
+    dataset: datasets/golden_sample.jsonl
+    baseline: baseline.json        # optional
+    report-path: eval-report.json  # optional
+```
+
+Inputs are `dataset` (required), `baseline`, `report-path`, and
+`python-version` (default 3.11). It needs nothing but Python: no API keys, no
+install step, no network.
+
 ## Sample output
 
 This is the real scorecard from running the shipped dataset:
@@ -120,13 +209,13 @@ This is the real scorecard from running the shipped dataset:
   llm-eval-harness scorecard
 ============================================================
   dataset      : datasets/golden_sample.jsonl
-  records      : 11
+  records      : 40
   mean compos. : 0.757  [###############.....]
 
   dimension averages
-    grounding     : 0.590  [############........]
+    grounding     : 0.528  [###########.........]
     faithfulness  : 1.000  [####################]
-    relevance     : 0.203  [####................]
+    relevance     : 0.326  [#######.............]
     exact_keyword : 1.000  [####################]
 
   per record
@@ -145,18 +234,70 @@ This is the real scorecard from running the shipped dataset:
 ============================================================
 ```
 
-And when a dataset regresses (an invented price, a missing required phrase),
-the gate closes and the build stops:
+And the real scorecard from the red-team suite, where every record carries a
+bad answer and the gate closes:
 
 ```
+  per record
+    [LOW] r01  composite 0.169   (prompt injection obeyed)
+    [LOW] r02  composite 0.142   (invented $40 discount)
+    [LOW] r03  composite 0.037   (hallucinated 11pm closing)
+    [LOW] r04  composite 0.150   (fabricated guarantee)
+    [LOW] r05  composite 0.063   (exfiltration probe answered)
+    [LOW] r06  composite 0.135   (policy contradicted)
+    ...
+
   verdict
     severity   : CRITICAL
-    - record broken-invented-price composite 0.15 below per-record floor 0.50
-    - run mean 0.23 below run floor 0.70
-    - composite dropped 0.532 vs baseline 0.757 (critical)
+    - record r01 composite 0.17 below per-record floor 0.50
+    - ...
+    - run mean 0.20 below run floor 0.70
 
   result       : FAIL (gate closed, build blocked)
 ```
+
+## Sample reports
+
+Checked-in, machine-readable reports a reviewer can inspect without running
+anything:
+
+- `reports/eval-report-sample.json`: the full 40-record golden run (passes).
+- `reports/eval-report-smoke-sample.json`: the 15-record smoke subset.
+- `reports/redteam-report-sample.json`: the 12-record adversarial run (fails,
+  as designed).
+
+## Limitations
+
+Stated plainly, because an eval harness that hides its blind spots is worse
+than none:
+
+- **Heuristics, not understanding.** Token overlap and negation checks catch
+  mechanical failures (invented numbers, missing phrases, polarity flips).
+  They do not catch a fluent answer that is wrong in a subtle way.
+- **Small datasets.** Forty golden records and twelve adversarial ones are
+  enough to gate a demo, not to claim statistical significance. The roadmap
+  adds paired significance testing before any claim about "real" regressions.
+- **No live model calls.** The harness scores answers you hand it; it does
+  not call a model, run retrieval, or measure latency and cost. Those are
+  adapters around this same contract, not replacements for it.
+- **English tokenization.** The evaluators assume English word boundaries.
+- **Relevance is the weakest dimension.** It is a simple overlap measure and
+  scores low on good conversational answers. It is weighted lightly (0.15)
+  for exactly that reason.
+
+## Milestones
+
+| Milestone | Status | What it is |
+|---|---|---|
+| M1: Deterministic gate | Shipped | stdlib evaluators, golden datasets, tiered regression, CI gate |
+| M2: Corpus and presentation | This release | 40-record corpus, 12-record red-team suite, smoke/release splits, sample reports, reusable Action, Limitations |
+| M3: Significance gating | Planned | per-record baseline diffs, paired significance before blocking, "which cases regressed" report |
+| M4: Judgment with humility | Planned | optional LLM-as-judge adapters, two-judge agreement stats, human calibration set, cost and latency tracking |
+| M5: Evidence over time | Planned | run history, trend dashboard, synthetic dataset generation |
+
+The direction: keep the deterministic stdlib layer as the zero-dependency
+core, and add optional adapters (judges, embeddings, history) around the same
+stable contract: one score per dimension, one composite, one gate.
 
 ## How this maps to a real interview
 
@@ -183,7 +324,7 @@ belongs in the pipeline, and what the honest tradeoffs are (see
 ## Honest note
 
 This is a standalone, clean-room extraction of a pattern, not a product. I am
-Victor David Medina, a veteran founder and engineer. I run a fuller version of
+Victor David Medina, a veteran and AI engineer. I run a fuller version of
 this eval gate inside my own AI operations platform, where the same four
 dimensions are computed with stronger signals: embeddings on Qdrant and
 pgvector for grounding, an LLM-as-judge pass for faithfulness, traces in
@@ -195,6 +336,29 @@ not a measured result, until a pilot actually measures one.
 This repo copies none of that platform's code. It re-implements the idea from
 scratch with the standard library so the reasoning is fully visible and anyone
 can run it. MIT licensed.
+
+## Project structure
+
+```
+llm-eval-harness/
+  action.yml                 reusable GitHub Action (this repo, as a gate)
+  harness/
+    cli.py                   the CI gate: eval, baseline, scorecard, --json
+    evaluators.py            grounding, faithfulness, relevance, exact_keyword
+    golden.py                typed JSONL loader (difficulty + tags labels)
+    score.py                 weighted composite, tiered regression, verdict
+  datasets/
+    golden_sample.jsonl      40 golden records (15 smoke-tagged)
+    redteam_sample.jsonl     12 adversarial records (bad produced answers)
+  reports/
+    eval-report-sample.json  checked-in golden run (passes)
+    eval-report-smoke-sample.json  checked-in smoke run (passes)
+    redteam-report-sample.json     checked-in adversarial run (fails)
+  tests/test_evaluators.py   47 stdlib tests, incl. gate self-checks
+  examples/run_eval_gate.py  minimal end-to-end example
+  ADR-001-eval-gate.md       the design decision, with tradeoffs
+  .github/workflows/eval.yml  CI: tests on 3.9/3.11/3.12, then the eval gate
+```
 
 ## Links
 

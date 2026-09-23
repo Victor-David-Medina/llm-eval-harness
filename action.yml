@@ -1,0 +1,47 @@
+name: "LLM Eval Gate"
+description: >-
+  Score LLM output against a golden dataset with deterministic,
+  dependency-free evaluators, and fail the build on a critical quality
+  regression. No API keys, no model calls, no network needed.
+author: "Victor David Medina"
+
+branding:
+  icon: "check-square"
+  color: "green"
+
+inputs:
+  dataset:
+    description: "Path to a JSONL golden dataset, relative to the repository root."
+    required: true
+  baseline:
+    description: "Optional path to a baseline JSON file (from a previous run's --json output)."
+    required: false
+    default: ""
+  report-path:
+    description: "Optional path to write the machine-readable JSON report."
+    required: false
+    default: ""
+  python-version:
+    description: "Python version to run the harness with."
+    required: false
+    default: "3.11"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: ${{ inputs.python-version }}
+
+    - name: Run the eval gate
+      shell: bash
+      run: |
+        ARGS=(eval --dataset "${{ inputs.dataset }}")
+        if [ -n "${{ inputs.baseline }}" ]; then
+          ARGS+=(--baseline "${{ inputs.baseline }}")
+        fi
+        if [ -n "${{ inputs.report-path }}" ]; then
+          ARGS+=(--json "${{ inputs.report-path }}")
+        fi
+        PYTHONPATH="${{ github.action_path }}:${PYTHONPATH}" python -m harness.cli "${ARGS[@]}"
