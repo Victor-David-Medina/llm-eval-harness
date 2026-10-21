@@ -1,7 +1,7 @@
 # llm-eval-harness
 
 [![eval-gate](https://github.com/Victor-David-Medina/llm-eval-harness/actions/workflows/eval.yml/badge.svg)](https://github.com/Victor-David-Medina/llm-eval-harness/actions/workflows/eval.yml)
-[![python](https://img.shields.io/badge/python-3.9%2B-blue)](https://www.python.org/)
+[![python](https://img.shields.io/badge/python-3.11%2B-blue)](https://www.python.org/)
 [![license](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
 **Evals as tests: a CI gate for LLM output quality.**
@@ -357,7 +357,7 @@ llm-eval-harness/
   tests/test_evaluators.py   47 stdlib tests, incl. gate self-checks
   examples/run_eval_gate.py  minimal end-to-end example
   ADR-001-eval-gate.md       the design decision, with tradeoffs
-  .github/workflows/eval.yml  CI: tests on 3.9/3.11/3.12, then the eval gate
+  .github/workflows/eval.yml  CI: tests on 3.11/3.12/3.13, then the eval gate
 ```
 
 ## Links
