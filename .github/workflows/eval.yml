@@ -10,8 +10,6 @@ name: eval-gate
 on:
   push:
     branches: [main]
-  pull_request:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
@@ -24,7 +22,7 @@ concurrency:
 jobs:
   eval-gate:
     name: tests and eval gate
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, rig]
     timeout-minutes: 15
     strategy:
       fail-fast: false
