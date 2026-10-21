@@ -48,6 +48,7 @@ jobs:
       - name: Upload the machine-readable eval report
         # Runs even on failure so a blocked build still publishes its evidence.
         if: always()
+        continue-on-error: true
         uses: actions/upload-artifact@v4
         with:
           name: eval-report-py${{ matrix.python-version }}
