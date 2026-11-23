@@ -16,6 +16,16 @@ weighted number, and compares it to a baseline. If the number falls too far,
 the build fails. No API keys, no model calls, no network. A reviewer can read
 every line.
 
+**Results:** 47 tests passing · 40 golden + 12 adversarial examples · four
+deterministic scorers · stdlib-only · runs offline, no API key · ships as a
+GitHub Action. See a sample gate report:
+[`reports/eval-report-sample.json`](reports/eval-report-sample.json) (the
+full 40-record golden run, passing), or
+[`reports/redteam-report-sample.json`](reports/redteam-report-sample.json)
+(the adversarial run, failing as designed).
+
+**Status:** complete, maintained best-effort.
+
 ## Why this exists
 
 LLM output is non-deterministic. The same prompt can produce a slightly worse
